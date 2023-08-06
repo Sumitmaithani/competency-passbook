@@ -3,71 +3,80 @@
 import RemoveBtnCourse from "../../components/RemoveBtnCourse";
 import Image from "next/image";
 import { BsInfoCircleFill } from "react-icons/bs";
-import React from "react";
-import axios from "axios";
 
-export default function page() {
-  const [topics, setTopics] = React.useState([]);
-  const [courses, setCourses] = React.useState([]);
+const getCourses = async () => {
+  try {
+    const res = await fetch(`http://localhost:3000/api/courses`, {
+      cache: "no-store"
+    });
 
-  const getCourses = async () => {
-    try {
-      const res = await axios.get("/api/courses");
-      setCourses(res.data.courses);
-    } catch (error) {
-      console.log("Error loading courses: ", error);
-    }
-  };
-
-  const getTopics = async () => {
-    try {
-      const res = await axios.get("/api/topics");
-      setTopics(res.data.topics);
-    } catch (error) {
-      console.log("Error loading topics: ", error);
-    }
-  };
-
-  React.useEffect(() => {
-    getCourses();
-    getTopics();
-  }, []);
-
-  const CompetencyAnalysis = (courseSubjects) => {
-    const totalCourseSubjects = courseSubjects.length;
-    const matchingSubjects = courseSubjects.filter((subject) =>
-      topics.some((obj) => obj.Subjects.includes(subject))
-    );
-    const totalMatchingSubjects = matchingSubjects.length;
-
-    if (totalMatchingSubjects === totalCourseSubjects) {
-      return 100; // All course subjects are present in the topic
-    } else if (totalMatchingSubjects === 0) {
-      return 0; // None of the course subjects are present in the topic
-    } else {
-      // Calculate the matching score in the range of 0 to 100
-      const matchingScore = (totalMatchingSubjects / totalCourseSubjects) * 100;
-
-      return Math.round(matchingScore);
-    }
-  };
-
-  const unmatchedSubjects = (courseSubjects) => {
-    const matchingSubjects = courseSubjects.filter((subject) =>
-      topics.some((obj) => obj.Subjects.includes(subject))
-    );
-
-    // Find the unmatched subjects
-    const unmatchedSubjects = courseSubjects.filter(
-      (subject) => !matchingSubjects.includes(subject)
-    );
-
-    if (unmatchedSubjects.length == 0) {
-      return "You all good";
+    if (!res.ok) {
+      throw new Error("Failed to fetch courses");
     }
 
-    return unmatchedSubjects + " ";
-  };
+    console.log(res);
+    return res.json();
+  } catch (error) {
+    console.log("Error loading courses: ", error);
+  }
+};
+
+const getTopics = async () => {
+  try {
+    const res = await fetch(`http://localhost:3000/api/topics`, {
+      cache: "no-store"
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch topics");
+    }
+
+    return res.json();
+  } catch (error) {
+    console.log("Error loading topics: ", error);
+  }
+};
+
+const CompetencyAnalysis = async (courseSubjects) => {
+  const { topics } = await getTopics();
+  const totalCourseSubjects = courseSubjects.length;
+  const matchingSubjects = courseSubjects.filter((subject) =>
+    topics.some((obj) => obj.Subjects.includes(subject))
+  );
+  const totalMatchingSubjects = matchingSubjects.length;
+
+  if (totalMatchingSubjects === totalCourseSubjects) {
+    return 100; // All course subjects are present in the topic
+  } else if (totalMatchingSubjects === 0) {
+    return 0; // None of the course subjects are present in the topic
+  } else {
+    // Calculate the matching score in the range of 0 to 100
+    const matchingScore = (totalMatchingSubjects / totalCourseSubjects) * 100;
+
+    return Math.round(matchingScore);
+  }
+};
+
+const unmatchedSubjects = async (courseSubjects) => {
+  const { topics } = await getTopics();
+  const matchingSubjects = courseSubjects.filter((subject) =>
+    topics.some((obj) => obj.Subjects.includes(subject))
+  );
+
+  // Find the unmatched subjects
+  const unmatchedSubjects = courseSubjects.filter(
+    (subject) => !matchingSubjects.includes(subject)
+  );
+
+  if (unmatchedSubjects.length == 0) {
+    return "You all good";
+  }
+
+  return unmatchedSubjects+' ';
+};
+
+export default async function page() {
+  const { courses } = await getCourses();
 
   return (
     <div className="mt-20">
@@ -89,13 +98,13 @@ export default function page() {
               </div>
               <div className="flex items-center ">
                 <div>CP : {CompetencyAnalysis(t.Subjects)}/100 </div>
-                <div className="group relative cursor-pointer py-2 ml-2">
-                  <div className="absolute invisible bottom-7 group-hover:visible bg-black text-white px-4 mb-3 py-2 text-sm rounded-md">
-                    <p className=" leading-2 text-white-600 pt-2 pb-2">
+                <div class="group relative cursor-pointer py-2 ml-2">
+                  <div class="absolute invisible bottom-7 group-hover:visible bg-black text-white px-4 mb-3 py-2 text-sm rounded-md">
+                    <p class=" leading-2 text-white-600 pt-2 pb-2">
                       {unmatchedSubjects(t.Subjects)}
                     </p>
                     <svg
-                      className="absolute z-10  bottom-[-10px] "
+                      class="absolute z-10  bottom-[-10px] "
                       width="16"
                       height="10"
                       viewBox="0 0 16 10"
@@ -105,7 +114,7 @@ export default function page() {
                       <path d="M8 10L0 0L16 1.41326e-06L8 10Z" fill="black" />
                     </svg>
                   </div>
-                  <span className="underline hover:cursor-pointer">
+                  <span class="underline hover:cursor-pointer">
                     <BsInfoCircleFill />
                   </span>
                 </div>

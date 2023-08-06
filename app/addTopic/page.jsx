@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 
 export default function AddTopic() {
   const [School, setSchool] = useState("");
@@ -32,9 +31,18 @@ export default function AddTopic() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // if (!title || !description) {
+    //   alert("Title and description are required.");
+    //   return;
+    // }
+
     try {
-      const res = await axios
-        .post("/api/topics", {
+      const res = await fetch(`http://localhost:3000/api/topics`, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json"
+        },
+        body: JSON.stringify({
           School,
           Degree,
           FieldOfStudy,
@@ -44,14 +52,14 @@ export default function AddTopic() {
           Description,
           Subjects
         })
-        .then(function (response) {
-          console.log(response);
-          router.push("/");
-          router.refresh();
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      });
+
+      if (res.ok) {
+        router.push("/");
+        router.refresh();
+      } else {
+        throw new Error("Failed to create a topic");
+      }
     } catch (error) {
       console.log(error);
     }

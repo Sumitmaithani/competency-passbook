@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import moment from "moment";
-import axios from "axios";
 
 export default function EditTopicForm({
   id,
@@ -25,26 +24,6 @@ export default function EditTopicForm({
   const [NewGrade, setNewGrade] = useState(Grade);
   const [NewSubjects, setNewSubjects] = useState(Subjects);
 
-  React.useEffect(() => {
-    setNewSchool(School);
-    setNewDegree(Degree);
-    setNewFieldOfStudy(FieldOfStudy);
-    setNewStartDate(StartDate);
-    setNewEndDate(EndDate);
-    setNewGrade(Grade);
-    setNewDescription(Description);
-    setNewSubjects(Subjects);
-  }, [
-    School,
-    Degree,
-    FieldOfStudy,
-    StartDate,
-    EndDate,
-    Grade,
-    Description,
-    Subjects
-  ]);
-
   const router = useRouter();
 
   const addTag = (e) => {
@@ -64,8 +43,12 @@ export default function EditTopicForm({
     e.preventDefault();
 
     try {
-      const res = await axios
-        .put(`/api/topics/${id}`, {
+      const res = await fetch(`http://localhost:3000/api/topics/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-type": "application/json"
+        },
+        body: JSON.stringify({
           NewSchool,
           NewDegree,
           NewFieldOfStudy,
@@ -75,14 +58,14 @@ export default function EditTopicForm({
           NewDescription,
           NewSubjects
         })
-        .then(function (response) {
-          console.log(response);
-          router.push("/");
-          router.refresh();
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to update topic");
+      }
+
+      router.push("/");
+      router.refresh();
     } catch (error) {
       console.log(error);
     }
@@ -146,7 +129,7 @@ export default function EditTopicForm({
       <div className="flex items-center text-center">
         <b>Subjects :</b>
         <div className="tag-container ml-3">
-          {NewSubjects?.map((tag, index) => {
+          {NewSubjects.map((tag, index) => {
             return (
               <div key={index} className="tag">
                 {tag} <span onClick={() => removeTag(tag)}>x</span>
