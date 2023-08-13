@@ -37,7 +37,7 @@ function Icon({ id, open }) {
 
 const TABLE_HEAD = ["Competency", "Status"];
 
-const page = ({ params }) => {
+const Page = ({ params }) => {
   const { id } = params;
   const [video, setVideo] = useState("");
   const [open, setOpen] = React.useState(0);
@@ -294,4 +294,4 @@ const page = ({ params }) => {
   );
 };
 
-export default page;
+export default Page;

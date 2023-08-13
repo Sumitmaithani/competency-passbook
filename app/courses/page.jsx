@@ -7,7 +7,7 @@ import React from "react";
 import axios from "axios";
 import Link from "next/link";
 
-export default function page() {
+export default function Page() {
   const [topics, setTopics] = React.useState([]);
   const [courses, setCourses] = React.useState([]);
 
