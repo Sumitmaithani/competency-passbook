@@ -7,7 +7,10 @@ const CourseSchema = new Schema(
     Image: String,
     Description: String,
     Subjects: Array,
-    LearningHours: String
+    LearningHours: String,
+    Summary: String,
+    Competencies: Array,
+    Content: Array
   },
   {
     timestamps: true
