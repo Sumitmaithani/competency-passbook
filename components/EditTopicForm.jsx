@@ -89,7 +89,7 @@ export default function EditTopicForm({
   };
 
   return (
-    <div className="flex flex-col gap-3 mt-20">
+    <div className="flex flex-col gap-3 my-10 px-40">
       <input
         onChange={(e) => setNewSchool(e.target.value)}
         value={NewSchool}

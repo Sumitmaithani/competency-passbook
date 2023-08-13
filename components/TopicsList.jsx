@@ -7,7 +7,7 @@ import moment from "moment";
 
 export default function TopicsList({ topics }) {
   return (
-    <div className="mt-20">
+    <div className="justify-center items-center text-center my-10 px-40">
       {topics
         .slice(0)
         .reverse()
