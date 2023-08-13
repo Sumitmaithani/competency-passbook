@@ -46,17 +46,6 @@ const Page = ({ params }) => {
 
   const [course, setCourse] = React.useState([]);
 
-  const getCourse = async () => {
-    try {
-      const res = await axios.get(`/api/courses/${id}`);
-      console.log(res);
-      setCourse(res.data.course);
-      setVideo(res.data.course.Content[0].modules[0].link);
-    } catch (error) {
-      console.log("Error loading courses: ", error);
-    }
-  };
-
   const handleCheckboxClick = async (sectionIndex, moduleIndex) => {
     try {
       const res = await axios
@@ -137,6 +126,16 @@ const Page = ({ params }) => {
   };
 
   React.useEffect(() => {
+    const getCourse = async () => {
+      try {
+        const res = await axios.get(`/api/courses/${id}`);
+        console.log(res);
+        setCourse(res.data.course);
+        setVideo(res.data.course.Content[0].modules[0].link);
+      } catch (error) {
+        console.log("Error loading courses: ", error);
+      }
+    };
     getCourse();
   }, []);
 

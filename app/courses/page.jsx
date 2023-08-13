@@ -11,25 +11,25 @@ export default function Page() {
   const [topics, setTopics] = React.useState([]);
   const [courses, setCourses] = React.useState([]);
 
-  const getCourses = async () => {
-    try {
-      const res = await axios.get("/api/courses");
-      setCourses(res.data.courses);
-    } catch (error) {
-      console.log("Error loading courses: ", error);
-    }
-  };
-
-  const getTopics = async () => {
-    try {
-      const res = await axios.get("/api/topics");
-      setTopics(res.data.topics);
-    } catch (error) {
-      console.log("Error loading topics: ", error);
-    }
-  };
-
   React.useEffect(() => {
+    const getCourses = async () => {
+      try {
+        const res = await axios.get("/api/courses");
+        setCourses(res.data.courses);
+      } catch (error) {
+        console.log("Error loading courses: ", error);
+      }
+    };
+
+    const getTopics = async () => {
+      try {
+        const res = await axios.get("/api/topics");
+        setTopics(res.data.topics);
+      } catch (error) {
+        console.log("Error loading topics: ", error);
+      }
+    };
+
     getCourses();
     getTopics();
   }, []);
