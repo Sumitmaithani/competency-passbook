@@ -11,7 +11,7 @@ import {
   AccordionHeader,
   AccordionBody
 } from "@material-tailwind/react";
-import { PiTelevisionDuotone } from "react-icons/Pi";
+//import { PiTelevisionDuotone } from "react-icons";
 import axios from "axios";
 
 function Icon({ id, open }) {
@@ -275,7 +275,8 @@ const page = ({ params }) => {
                                 color="gray"
                                 className="font-normal flex items-center gap-2"
                               >
-                                <PiTelevisionDuotone /> {duration}
+                                {/* <PiTelevisionDuotone /> */}
+                                {duration}
                               </Typography>
                             </div>
                           </ListItem>
