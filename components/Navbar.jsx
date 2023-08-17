@@ -1,20 +1,82 @@
 "use client";
 
 import Link from "next/link";
+import Logo from "../public/Images/karmayogiLogo.svg";
+import Image from "next/image";
+import { usePathname, useSearchParams } from "next/navigation";
 
 const Navbar = () => {
+  const pathname = usePathname();
+  console.log(pathname);
   return (
-    <nav className="flex justify-between items-center bg-black px-8 py-5">
+    <nav className="flex justify-between items-center bg-white px-14 py-5 border-y-4">
       <Link className="text-white font-bold" href={"/"}>
-        Competency Passbook
+        <Image alt="logo" src={Logo} width={200} />
       </Link>
       <div>
-        <Link className="bg-white p-2 mr-2" href={"/courses"}>
-          Courses
-        </Link>
-        <Link className="bg-white p-2 ml-2" href={"/addTopic"}>
-          Add Education
-        </Link>
+        {pathname == "/" ? (
+          <Link
+            className="bg-white p-2 mr-2 font-bold text-blue text-blue-800 underline decoration-2 decoration-yellow-500"
+            href={"/"}
+          >
+            HOME
+          </Link>
+        ) : (
+          <Link
+            className="bg-white p-2 mr-2 text-blue hover:text-blue-800 hover:underline decoration-2 decoration-yellow-500"
+            href={"/"}
+          >
+            HOME
+          </Link>
+        )}
+
+        {pathname == "/dashboard" ? (
+          <Link
+            className="bg-white p-2 mr-2 font-bold text-blue-800 underline decoration-2 decoration-yellow-500"
+            href={"/dashboard"}
+          >
+            DASHBOARD
+          </Link>
+        ) : (
+          <Link
+            className="bg-white p-2 mr-2 hover:text-blue-800 hover:underline decoration-2 decoration-yellow-500"
+            href={"/dashboard"}
+          >
+            DASHBOARD
+          </Link>
+        )}
+
+        {pathname == "/courses" ? (
+          <Link
+            className="bg-white p-2 mr-2 font-bold text-blue-800 underline decoration-2 decoration-yellow-500"
+            href={"/courses"}
+          >
+            COURSES
+          </Link>
+        ) : (
+          <Link
+            className="bg-white p-2 mr-2 hover:text-blue-800 hover:underline decoration-2 decoration-yellow-500"
+            href={"/courses"}
+          >
+            COURSES
+          </Link>
+        )}
+
+        {pathname == "/addTopic" ? (
+          <Link
+            className="bg-white p-2 mr-2 font-bold text-blue-800 underline decoration-2 decoration-yellow-500"
+            href={"/addTopic"}
+          >
+            ADD EDUCATION
+          </Link>
+        ) : (
+          <Link
+            className="bg-white p-2 mr-2 hover:text-blue-800 hover:underline decoration-2 decoration-yellow-500"
+            href={"/addTopic"}
+          >
+            ADD EDUCATION
+          </Link>
+        )}
       </div>
     </nav>
   );
