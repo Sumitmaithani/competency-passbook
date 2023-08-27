@@ -43,10 +43,40 @@ const Page = ({ params }) => {
   const [video, setVideo] = useState("");
   const [open, setOpen] = React.useState(0);
   const [loading, setLoading] = React.useState(true);
+  const [QuizData, setQuizData] = useState([]);
 
   const handleOpen = (value) => setOpen(open === value ? 0 : value);
 
   const [course, setCourse] = React.useState([]);
+
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [score, setScore] = useState(0);
+  const [clickedOption, setClickedOption] = useState(0);
+  const [showResult, setShowResult] = useState(false);
+
+  const changeQuestion = () => {
+    updateScore();
+    if (currentQuestion < QuizData.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+      setClickedOption(0);
+    } else {
+      setShowResult(true);
+      if (score > (QuizData.length - 1) / 2) {
+        updateCompetencyStatus(course.Competencies.length - 1);
+      }
+    }
+  };
+  const updateScore = () => {
+    if (clickedOption === QuizData[currentQuestion].answer) {
+      setScore(score + 1);
+    }
+  };
+  const resetAll = () => {
+    setShowResult(false);
+    setCurrentQuestion(0);
+    setClickedOption(0);
+    setScore(0);
+  };
 
   const handleCheckboxClick = async (sectionIndex, moduleIndex) => {
     try {
@@ -134,6 +164,13 @@ const Page = ({ params }) => {
         console.log(res);
         setCourse(res.data.course);
         setVideo(res.data.course.Content[0].modules[0].link);
+        const lastSectionIndex = res.data?.course?.Content?.length - 1;
+        console.log(
+          lastSectionIndex,
+          "quizdata",
+          res.data.course.Content[lastSectionIndex].modules[0].quiz
+        );
+        setQuizData(res.data.course.Content[lastSectionIndex].modules[0].quiz);
         setLoading(false);
       } catch (error) {
         console.log("Error loading courses: ", error);
@@ -151,14 +188,64 @@ const Page = ({ params }) => {
       ) : (
         <div className="flex justify-between">
           <div>
-            <iframe
-              width="980"
-              height="415"
-              src={video}
-              title="YouTube video player"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-            ></iframe>
+            {video == "test" ? (
+              showResult ? (
+                <div className="mt-6 mb-8">
+                  <div className="show-score">
+                    Your Score:{score}
+                    <br />
+                    Total Score:{QuizData.length}
+                  </div>
+                  <div className="flex justify-center">
+                    <button id="next-button" onClick={resetAll}>
+                      Try Again
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <div className="question">
+                    <span id="question-number">{currentQuestion + 1}. </span>
+                    <span id="question-txt">
+                      {QuizData[currentQuestion].question}
+                    </span>
+                  </div>
+                  <div className="option-container">
+                    {QuizData[currentQuestion].options.map((option, i) => {
+                      return (
+                        <button
+                          // className="option-btn"
+                          className={`option-btn ${
+                            clickedOption == i + 1 ? "checked" : null
+                          }`}
+                          key={i}
+                          onClick={() => setClickedOption(i + 1)}
+                        >
+                          {option}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="flex justify-center">
+                    <input
+                      type="button"
+                      value="Next"
+                      id="next-button"
+                      onClick={changeQuestion}
+                    />
+                  </div>
+                </div>
+              )
+            ) : (
+              <iframe
+                width="980"
+                height="415"
+                src={video}
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              ></iframe>
+            )}
 
             <div className="py-6 pl-8">
               <div className="">
