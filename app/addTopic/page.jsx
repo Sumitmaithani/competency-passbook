@@ -46,7 +46,7 @@ export default function AddTopic() {
         })
         .then(function (response) {
           console.log(response);
-          router.push("/");
+          router.push("/dashboard");
           router.refresh();
         })
         .catch(function (error) {

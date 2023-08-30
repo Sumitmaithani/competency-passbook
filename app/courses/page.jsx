@@ -12,12 +12,14 @@ export default function Page() {
   const [topics, setTopics] = React.useState([]);
   const [courses, setCourses] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
+  const [CP, setCP] = React.useState(0);
 
   React.useEffect(() => {
     const getCourses = async () => {
       try {
         const res = await axios.get("/api/courses");
         setCourses(res.data.courses);
+        console.log(res.data.courses);
         setLoading(false);
       } catch (error) {
         console.log("Error loading courses: ", error);
@@ -38,40 +40,37 @@ export default function Page() {
     getTopics();
   }, []);
 
-  const CompetencyAnalysis = (courseSubjects) => {
-    const totalCourseSubjects = courseSubjects.length;
-    const matchingSubjects = courseSubjects.filter((subject) =>
-      topics.some((obj) => obj.Subjects.includes(subject))
+  const CompetencyAnalysis = (Competencies) => {
+    const totalCompetencies = Competencies.length;
+    const matchingCompetencies = Competencies.filter((cp) =>
+      cp.status=='Pass'
     );
-    const totalMatchingSubjects = matchingSubjects.length;
+    const totalPass = matchingCompetencies.length;
 
-    if (totalMatchingSubjects === totalCourseSubjects) {
+    if (totalCompetencies === totalPass) {
       return 100; // All course subjects are present in the topic
-    } else if (totalMatchingSubjects === 0) {
+    } else if (totalPass === 0) {
       return 0; // None of the course subjects are present in the topic
     } else {
       // Calculate the matching score in the range of 0 to 100
-      const matchingScore = (totalMatchingSubjects / totalCourseSubjects) * 100;
+      const matchingScore = (totalPass / totalCompetencies) * 100;
 
       return Math.round(matchingScore);
     }
   };
 
-  const unmatchedSubjects = (courseSubjects) => {
-    const matchingSubjects = courseSubjects.filter((subject) =>
-      topics.some((obj) => obj.Subjects.includes(subject))
+  const unmatchedSubjects = (Competencies) => {
+    const matchingCompetencies = Competencies.filter((cp) =>
+      cp.status=='Pass'
     );
 
-    // Find the unmatched subjects
-    const unmatchedSubjects = courseSubjects.filter(
-      (subject) => !matchingSubjects.includes(subject)
-    );
+    const unmatchedNames = matchingCompetencies.map((cp) => cp.name).join(', ');
 
-    if (unmatchedSubjects.length == 0) {
-      return "You all good";
+    if (matchingCompetencies.length == 0) {
+      return "You haven't complete any module";
     }
 
-    return unmatchedSubjects + " ";
+    return unmatchedNames;
   };
 
   return (
@@ -100,11 +99,11 @@ export default function Page() {
                       <div>{t.LearningHours}</div>
                     </div>
                     <div className="flex items-center ">
-                      <div>CP : {CompetencyAnalysis(t.Subjects)}/100 </div>
+                      <div>CP : {CompetencyAnalysis(t.Competencies)}/100 </div>
                       <div className="group relative cursor-pointer py-2 ml-2">
                         <div className="absolute invisible bottom-7 group-hover:visible bg-black text-white px-4 mb-3 py-2 text-sm rounded-md">
                           <p className=" leading-2 text-white-600 pt-2 pb-2">
-                            {unmatchedSubjects(t.Subjects)}
+                            {unmatchedSubjects(t.Competencies)}
                           </p>
                           <svg
                             className="absolute z-10  bottom-[-10px] "
